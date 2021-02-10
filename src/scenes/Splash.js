@@ -21,23 +21,23 @@ export default class Splash extends Scene {
   }
 
   get finish() {
-    return new Promise((res)=>setTimeout(res, this.config.hideDelay));
+    return new Promise((res) => setTimeout(res, this.config.hideDelay));
   }
 
   preload() {
     const images = {
       logo: Assets.images.logo,
+      bird: Assets.images.bird,
     };
-    const sounds = {
-      
-    };
+    const sounds = {};
 
     return super.preload({ images, sounds });
   }
 
-  onResize(width, height) { // eslint-disable-line no-unused-vars
+  onResize(width, height) {
+    // eslint-disable-line no-unused-vars
     this.loadingText.x = width / 2;
-    this.loadingText.y = (height / 2) + 500;
+    this.loadingText.y = height / 2 + 500;
   }
 
   onLoadProgress(val) {

@@ -1,11 +1,11 @@
 export default {
   view: {
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: 900,
+    height: 450,
     backgroundColor: 0xffffff,
     worldWidth: 1000,
     worldHeight: 500,
-    resizeTo: window,
+    // resizeTo: window,
     centerOnResize: true,
   },
   game: {
