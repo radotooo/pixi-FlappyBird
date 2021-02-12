@@ -1,7 +1,9 @@
 export default {
   view: {
     width: 900,
-    height: 450,
+    height: 500,
+    // width: window.innerWidth,
+    // height: window.innerHeight,
     backgroundColor: 0xffffff,
     worldWidth: 1000,
     worldHeight: 500,

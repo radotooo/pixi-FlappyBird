@@ -1,28 +1,118 @@
-import { Texture, Ticker } from 'pixi.js';
+import { Ticker } from 'pixi.js';
 import Scene from './Scene';
 
-import Footer from '../components/Footer';
 import Bird from '../components/Bird';
+import ObstacleSet from '../components/ObstacleSet';
+
+import config from '../config';
 
 export default class Play extends Scene {
+  constructor() {
+    super();
+
+    this.obstacles = [];
+    this.pressedKeys = [];
+    this.gameOver = false;
+    this.addEventListeners();
+  }
+
   async onCreated() {
-    const footer = new Footer();
-    footer.x = -window.innerWidth / 2;
-    footer.y = window.innerHeight / 2 - footer.height;
+    this._createBird();
+    this._createObstacles(config.view.height, this.bird.x, 4, 5);
+    this._addTicker();
 
-    const bird = new Bird(new Texture.from('bird'));
-    const windowWidth = this.parent.parent.screenWidth;
-    const windowHeight = this.parent.parent.screenHeight;
+    this.ticker.start();
+  }
 
-    bird.x = -(this.parent.parent.screenWidth / 2 - bird.width);
+  _update(delta) {
+    const birdBounds = this.bird.getBounds();
+    this.bird.update(delta, config.view.height);
 
-    this.addChild(bird);
+    if (birdBounds.y >= config.view.height - birdBounds.height / 1.2) {
+      this._stopGame();
 
-    const ticker = new Ticker();
-    ticker.add((delta) => {
-      bird.update(delta, windowHeight, windowWidth);
+      return;
+    }
+
+    this.obstacles.forEach((x) => {
+      if (x.collision) {
+        this._stopGame();
+
+        return;
+      }
+
+      x.update(delta, config.view.width, birdBounds);
     });
-    ticker.start();
+  }
+  addEventListeners() {
+    document.addEventListener('keydown', (key) => {
+      const currentKeyPressed = key.code;
+      if (
+        currentKeyPressed === 'Space' &&
+        !this.pressedKeys.includes(currentKeyPressed)
+      ) {
+        this.pressedKeys.push(currentKeyPressed);
+        this.bird.goUp(70);
+      }
+    });
+
+    document.addEventListener('keyup', (event) => {
+      this.pressedKeys.splice(this.pressedKeys.indexOf(event.code), 1);
+    });
+
+    document.addEventListener('click', () => {
+      if (this.gameOver) {
+        this._reset();
+        this.gameOver = false;
+      }
+      this.onCreated();
+    });
+  }
+
+  _reset() {
+    this.ticker.stop();
+    this.gameOver = true;
+    this.bird.gameOver = true;
+    this.removeChild(this.bird);
+    this.obstacles.forEach((x) => x.destroy());
+    this.ticker.destroy();
+    this.obstacles = [];
+  }
+
+  _stopGame() {
+    this.ticker.stop();
+    this.gameOver = true;
+    this.bird.gameOver = true;
+  }
+
+  _createBird() {
+    const bird = new Bird(this.gameOver);
+    bird.x = -(this.parent.parent.screenWidth / 2 - bird.width);
+    this.bird = bird;
+    this.addChild(this.bird);
+  }
+
+  _addTicker() {
+    this.ticker = new Ticker();
+    this.ticker.add((delta) => this._update(delta));
+  }
+
+  /**
+   * Create multiple OBstacleSet and add gap betweenn
+   * @param {Number} windowHeight Viewport height in pixels
+   * @param {Number} birdXPosition X position of bird
+   * @param {Number} count Number of ObstacleSet to create
+   * @param {Number} gap Number multiplayed by ObstacleSet.width representing the gap between obstacles
+   */
+  _createObstacles(windowHeight, birdXPosition, count, gap) {
+    for (let index = 0; index < count; index++) {
+      const obstacle = new ObstacleSet(windowHeight);
+
+      birdXPosition += obstacle.width * gap;
+      obstacle.x += birdXPosition;
+      this.obstacles.push(obstacle);
+      this.addChild(obstacle);
+    }
   }
 
   /**
