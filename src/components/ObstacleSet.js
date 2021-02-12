@@ -2,7 +2,11 @@ import { Container } from 'pixi.js';
 import Obstacle from './Obstacle';
 import config from '../config';
 
-export default class Obsticle extends Container {
+/**
+ * Class representing a "Obstacle"
+ * @extends PIXI.Container
+ */
+export default class ObstacleSet extends Container {
   constructor() {
     super();
 
@@ -11,6 +15,12 @@ export default class Obsticle extends Container {
     this._init();
   }
 
+  /**
+   * Update obsticle set on every tick
+   * @param {*} delta Time between every tick
+   * @param {Number} width App width value
+   * @param {Object} bird Bird sprite boundaries
+   */
   update(delta, width, bird) {
     const currentBoundsTop = this.obstacleTop.getBounds();
     const currentBoundsBottom = this.obstacleBottom.getBounds();
@@ -35,6 +45,12 @@ export default class Obsticle extends Container {
     }
   }
 
+  /**
+   * @param {Object} bird Bird sprite boundaries
+   * @param {PIXI.Sprite} currentBoundsTop Top obsticle
+   * @param {PIXI.Sprite} currentBoundsBottom Bottom obsticle
+   * @private
+   */
   _checkCollision(bird, currentBoundsTop, currentBoundsBottom) {
     return (
       (bird.x + bird.width - 15 > currentBoundsTop.x &&
@@ -48,6 +64,9 @@ export default class Obsticle extends Container {
     );
   }
 
+  /**
+   * @private
+   */
   async _init() {
     const obstacleTop = new Obstacle(-config.view.height / 2.9, 180);
     this.obstacleTop = obstacleTop;

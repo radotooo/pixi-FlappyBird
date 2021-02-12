@@ -1,7 +1,11 @@
 import { Container, Sprite } from 'pixi.js';
 import gsap from 'gsap/all';
 
-export default class Birds extends Container {
+/**
+ * Class representing a "Bird"
+ * @extends PIXI.Container
+ */
+export default class Bird extends Container {
   constructor(gameOver) {
     super();
 
@@ -15,7 +19,7 @@ export default class Birds extends Container {
     this.addChild(this.bird);
   }
 
-  update(delta, height) {
+  update(delta) {
     if (!this.animationIsPlaying) {
       this.goDown(delta);
     }
@@ -44,6 +48,10 @@ export default class Birds extends Container {
     this.animationIsPlaying = false;
   }
 
+  /**
+   * Entering the scene bero animation start
+   * @private
+   */
   async _moveToStartPosition() {
     this.animationIsPlaying = true;
     await gsap.to(this, {

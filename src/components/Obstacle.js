@@ -1,6 +1,12 @@
 import { Sprite, Container } from 'pixi.js';
 
-export default class Obsticle extends Container {
+/**
+ * Class representing a "Obstacle"
+ * @param {Number} y Container y value
+ * @param {Number} angle Container angle value
+ * @extends PIXI.Container
+ */
+export default class Obstacle extends Container {
   constructor(y, angle = 0) {
     super();
     this.obstacle = new Sprite.from('obsticle');

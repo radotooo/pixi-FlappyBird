@@ -13,7 +13,7 @@ export default class Play extends Scene {
     this.obstacles = [];
     this.pressedKeys = [];
     this.gameOver = false;
-    this.addEventListeners();
+    this._addEventListeners();
   }
 
   async onCreated() {
@@ -44,14 +44,17 @@ export default class Play extends Scene {
       x.update(delta, config.view.width, birdBounds);
     });
   }
-  addEventListeners() {
+
+  _addEventListeners() {
     document.addEventListener('keydown', (key) => {
       const currentKeyPressed = key.code;
       if (
         currentKeyPressed === 'Space' &&
-        !this.pressedKeys.includes(currentKeyPressed)
+        !this.pressedKeys.includes(currentKeyPressed) &&
+        !this.bird.gameOver
       ) {
         this.pressedKeys.push(currentKeyPressed);
+
         this.bird.goUp(70);
       }
     });
@@ -69,22 +72,30 @@ export default class Play extends Scene {
     });
   }
 
+  /**
+   * Reset animation
+   * @private
+   */
   _reset() {
-    this.ticker.stop();
-    this.gameOver = true;
-    this.bird.gameOver = true;
     this.removeChild(this.bird);
     this.obstacles.forEach((x) => x.destroy());
     this.ticker.destroy();
     this.obstacles = [];
   }
 
+  /**
+   * @private
+   */
   _stopGame() {
     this.ticker.stop();
     this.gameOver = true;
     this.bird.gameOver = true;
   }
 
+  /**
+   * Create Bird Sprite
+   * @private
+   */
   _createBird() {
     const bird = new Bird(this.gameOver);
     bird.x = -(this.parent.parent.screenWidth / 2 - bird.width);
@@ -92,6 +103,9 @@ export default class Play extends Scene {
     this.addChild(this.bird);
   }
 
+  /**
+   * @private
+   */
   _addTicker() {
     this.ticker = new Ticker();
     this.ticker.add((delta) => this._update(delta));
@@ -109,7 +123,7 @@ export default class Play extends Scene {
       const obstacle = new ObstacleSet(windowHeight);
 
       birdXPosition += obstacle.width * gap;
-      obstacle.x += birdXPosition;
+      obstacle.x += birdXPosition + 250;
       this.obstacles.push(obstacle);
       this.addChild(obstacle);
     }
