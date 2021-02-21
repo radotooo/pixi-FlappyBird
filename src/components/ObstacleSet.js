@@ -2,6 +2,10 @@ import { Container } from 'pixi.js';
 import Obstacle from './Obstacle';
 import config from '../config';
 
+const EVENTS = {
+  OBSTACLE_PASSED: 'obstacle_passed',
+  OBSTACLE_HIT: 'obstacle_hit',
+};
 /**
  * Class representing a "Obstacle"
  * @extends PIXI.Container
@@ -10,9 +14,13 @@ export default class ObstacleSet extends Container {
   constructor() {
     super();
 
-    this.passed = false;
-    this.collision = false;
+    this._passed = false;
+    this._collision = false;
     this._init();
+  }
+
+  static get events() {
+    return EVENTS;
   }
 
   /**
@@ -26,7 +34,8 @@ export default class ObstacleSet extends Container {
     const currentBoundsBottom = this.obstacleBottom.getBounds();
 
     if (this._checkCollision(bird, currentBoundsTop, currentBoundsBottom)) {
-      this.collision = true;
+      this.emit(ObstacleSet.events.OBSTACLE_HIT);
+      this._collision = true;
 
       return;
     }
@@ -35,12 +44,13 @@ export default class ObstacleSet extends Container {
 
     const currentObstacleBounds = this.getBounds();
 
-    if (bird.x > currentObstacleBounds.x && !this.passed) {
-      this.passed = true;
+    if (bird.x > currentObstacleBounds.x && !this._passed) {
+      this._passed = true;
+      this.emit(ObstacleSet.events.OBSTACLE_PASSED);
     }
 
     if (currentObstacleBounds.x < -this.width) {
-      this.passed = false;
+      this._passed = false;
       this.x = width / 2 + this.width * 2;
     }
   }
@@ -53,17 +63,19 @@ export default class ObstacleSet extends Container {
    */
   _checkCollision(bird, currentBoundsTop, currentBoundsBottom) {
     return (
-      (bird.x + bird.width - 15 > currentBoundsTop.x &&
-        bird.x < currentBoundsTop.x + currentBoundsTop.width - 15 &&
-        bird.y + bird.height - 15 > currentBoundsTop.y &&
-        bird.y < currentBoundsTop.y + currentBoundsTop.height - 15) ||
-      (bird.x + bird.width - 15 > currentBoundsBottom.x &&
-        bird.x < currentBoundsBottom.x + currentBoundsBottom.width - 15 &&
-        bird.y + bird.height - 15 > currentBoundsBottom.y &&
-        bird.y < currentBoundsBottom.y + currentBoundsBottom.height - 15)
+      this._interaction(bird, currentBoundsTop) ||
+      this._interaction(bird, currentBoundsBottom)
     );
   }
 
+  _interaction(bird, obstacle) {
+    return (
+      bird.x + bird.width - 15 > obstacle.x &&
+      bird.x < obstacle.x + obstacle.width - 15 &&
+      bird.y + bird.height - 15 > obstacle.y &&
+      bird.y < obstacle.y + obstacle.height - 15
+    );
+  }
   /**
    * @private
    */

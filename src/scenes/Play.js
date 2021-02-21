@@ -2,6 +2,7 @@ import { Ticker } from 'pixi.js';
 import Scene from './Scene';
 
 import Bird from '../components/Bird';
+import Points from '../components/Score';
 import ObstacleSet from '../components/ObstacleSet';
 
 import config from '../config';
@@ -13,6 +14,8 @@ export default class Play extends Scene {
     this.obstacles = [];
     this.pressedKeys = [];
     this.gameOver = false;
+    this.score = null;
+    this.count = 0;
     this._addEventListeners();
   }
 
@@ -20,13 +23,21 @@ export default class Play extends Scene {
     this._createBird();
     this._createObstacles(config.view.height, this.bird.x, 4, 5);
     this._addTicker();
+    this._addPoint();
 
     this.ticker.start();
   }
 
+  _addPoint() {
+    const point = new Points();
+    this.score = point;
+    this.score.zIndex = 1;
+    this.addChild(this.score);
+  }
+
   _update(delta) {
     const birdBounds = this.bird.getBounds();
-    this.bird.update(delta, config.view.height);
+    this.bird.update(delta, config.view.height, this.obstacles);
 
     if (birdBounds.y >= config.view.height - birdBounds.height / 1.2) {
       this._stopGame();
@@ -34,14 +45,14 @@ export default class Play extends Scene {
       return;
     }
 
-    this.obstacles.forEach((x) => {
-      if (x.collision) {
+    this.obstacles.forEach((obstacle) => {
+      if (obstacle.collision) {
         this._stopGame();
 
         return;
       }
 
-      x.update(delta, config.view.width, birdBounds);
+      obstacle.update(delta, config.view.width, birdBounds);
     });
   }
 
@@ -78,9 +89,11 @@ export default class Play extends Scene {
    */
   _reset() {
     this.removeChild(this.bird);
+    this.removeChild(this.score);
     this.obstacles.forEach((x) => x.destroy());
     this.ticker.destroy();
     this.obstacles = [];
+    this.currentScore = 0;
   }
 
   /**
@@ -124,6 +137,10 @@ export default class Play extends Scene {
 
       birdXPosition += obstacle.width * gap;
       obstacle.x += birdXPosition + 250;
+      obstacle.on(ObstacleSet.events.OBSTACLE_PASSED, () =>
+        this.score.update()
+      );
+      obstacle.on(ObstacleSet.events.OBSTACLE_HIT, () => this._stopGame());
       this.obstacles.push(obstacle);
       this.addChild(obstacle);
     }
