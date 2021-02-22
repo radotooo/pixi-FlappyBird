@@ -8,15 +8,14 @@ import { Container } from 'pixi.js';
  * @extends {PIXI.Container}
  */
 export default class Game extends Container {
-
   static get events() {
     return {
-      SWITCH_SCENE: 'switch_scene'
+      SWITCH_SCENE: 'switch_scene',
     };
   }
 
   /**
-   * @param {PIXI.Sprite} background 
+   * @param {PIXI.Sprite} background
    */
   constructor({ background } = {}) {
     super();
@@ -33,8 +32,8 @@ export default class Game extends Container {
   }
 
   /**
-   * @param {Function} constructor 
-   * @param {String} scene 
+   * @param {Function} constructor
+   * @param {String} scene
    */
   switchScene(constructor, scene) {
     this.removeChild(this.currentScene);

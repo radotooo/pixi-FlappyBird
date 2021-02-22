@@ -4,28 +4,48 @@ import Scene from './Scene';
 import Bird from '../components/Bird';
 import Points from '../components/Score';
 import ObstacleSet from '../components/ObstacleSet';
+import EndScreen from '../components/EndScreen';
 
+import StartScreen from '../components/StartScreen';
 import config from '../config';
 
 export default class Play extends Scene {
   constructor() {
     super();
-
-    this.obstacles = [];
-    this.pressedKeys = [];
-    this.gameOver = false;
-    this.score = null;
-    this.count = 0;
+    this._pressedKeys = [];
+    this._obstacles = [];
+    this._gameOver = false;
+    this._init();
     this._addEventListeners();
   }
 
-  async onCreated() {
+  _init() {
+    this._addStartScreen();
+    // this._addEndScreen();
+  }
+
+  _addEndScreen() {
+    const endScreen = new EndScreen();
+    this._endScreen = endScreen;
+    this.addChild(this._endScreen);
+  }
+
+  async _onCreated() {
+    await this._startScreen.hideScreen();
+    this.removeChild(this._startScreen);
     this._createBird();
     this._createObstacles(config.view.height, this.bird.x, 4, 5);
     this._addTicker();
     this._addPoint();
-
     this.ticker.start();
+  }
+
+  _addStartScreen() {
+    const startScreen = new StartScreen();
+    this._startScreen = startScreen;
+    this._startScreen.addListener('click', () => startScreen.startGame());
+    this._startScreen.on(StartScreen.event.START_GAME, () => this._onCreated());
+    this.addChild(startScreen);
   }
 
   _addPoint() {
@@ -37,7 +57,7 @@ export default class Play extends Scene {
 
   _update(delta) {
     const birdBounds = this.bird.getBounds();
-    this.bird.update(delta, config.view.height, this.obstacles);
+    this.bird.update(delta, config.view.height, this._obstacles);
 
     if (birdBounds.y >= config.view.height - birdBounds.height / 1.2) {
       this._stopGame();
@@ -45,7 +65,7 @@ export default class Play extends Scene {
       return;
     }
 
-    this.obstacles.forEach((obstacle) => {
+    this._obstacles.forEach((obstacle) => {
       if (obstacle.collision) {
         this._stopGame();
 
@@ -61,26 +81,25 @@ export default class Play extends Scene {
       const currentKeyPressed = key.code;
       if (
         currentKeyPressed === 'Space' &&
-        !this.pressedKeys.includes(currentKeyPressed) &&
+        !this._pressedKeys.includes(currentKeyPressed) &&
         !this.bird.gameOver
       ) {
-        this.pressedKeys.push(currentKeyPressed);
+        this._pressedKeys.push(currentKeyPressed);
 
         this.bird.goUp(70);
       }
     });
 
     document.addEventListener('keyup', (event) => {
-      this.pressedKeys.splice(this.pressedKeys.indexOf(event.code), 1);
+      this._pressedKeys.splice(this._pressedKeys.indexOf(event.code), 1);
     });
-
-    document.addEventListener('click', () => {
-      if (this.gameOver) {
-        this._reset();
-        this.gameOver = false;
-      }
-      this.onCreated();
-    });
+    // document.addEventListener('click', () => {
+    //   if (this._gameOver) {
+    //     this._reset();
+    //     this._gameOver = false;
+    //   }
+    //   this._onCreated();
+    // });
   }
 
   /**
@@ -90,9 +109,9 @@ export default class Play extends Scene {
   _reset() {
     this.removeChild(this.bird);
     this.removeChild(this.score);
-    this.obstacles.forEach((x) => x.destroy());
+    this._obstacles.forEach((x) => x.destroy());
     this.ticker.destroy();
-    this.obstacles = [];
+    this._obstacles = [];
     this.currentScore = 0;
   }
 
@@ -101,7 +120,7 @@ export default class Play extends Scene {
    */
   _stopGame() {
     this.ticker.stop();
-    this.gameOver = true;
+    this._gameOver = true;
     this.bird.gameOver = true;
   }
 
@@ -110,7 +129,7 @@ export default class Play extends Scene {
    * @private
    */
   _createBird() {
-    const bird = new Bird(this.gameOver);
+    const bird = new Bird(this._gameOver);
     bird.x = -(this.parent.parent.screenWidth / 2 - bird.width);
     this.bird = bird;
     this.addChild(this.bird);
@@ -141,7 +160,7 @@ export default class Play extends Scene {
         this.score.update()
       );
       obstacle.on(ObstacleSet.events.OBSTACLE_HIT, () => this._stopGame());
-      this.obstacles.push(obstacle);
+      this._obstacles.push(obstacle);
       this.addChild(obstacle);
     }
   }

@@ -29,6 +29,8 @@ export default class Splash extends Scene {
       logo: Assets.images.logo,
       bird: Assets.images.bird,
       obsticle: Assets.images.obsticle,
+      button: Assets.images.button,
+      gameOver: Assets.images.gameOver,
     };
     const sounds = {};
 

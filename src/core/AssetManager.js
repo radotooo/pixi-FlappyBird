@@ -2,7 +2,11 @@ import { Howl } from 'howler';
 import { Loader, Texture, Spritesheet } from 'pixi.js';
 import config from '../config';
 
-const context = require.context('../assets', true, /\.(jpg|png|wav|m4a|ogg|mp3)$/im);
+const context = require.context(
+  '../assets',
+  true,
+  /\.(jpg|png|wav|m4a|ogg|mp3)$/im
+);
 
 const IMG_EXTENSIONS = ['jpeg', 'jpg', 'png'];
 const SOUND_EXTENSIONS = ['wav', 'ogg', 'm4a', 'mp3'];
@@ -44,7 +48,10 @@ class AssetManager {
    *
    * @return {Promise} Returns a promise that is resolved once all assets are loaded
    */
-  load(assets = { images: this._images, sounds: this._sounds }, progressCallback = () => {}) {
+  load(
+    assets = { images: this._images, sounds: this._sounds },
+    progressCallback = () => {}
+  ) {
     const { images, sounds } = assets;
     const assetTypesCount = Object.keys(assets).length;
     const imagesCount = images ? Object.keys(images).length : 0;
@@ -58,7 +65,9 @@ class AssetManager {
     };
 
     if (imagesCount) {
-      loadPromises.push(this.loadImages(images, () => calcTotalProgress(100 / imagesCount)));
+      loadPromises.push(
+        this.loadImages(images, () => calcTotalProgress(100 / imagesCount))
+      );
     }
 
     if (soundsCount) {
@@ -69,10 +78,10 @@ class AssetManager {
   }
 
   /**
-     * Create a Loader instance and add the game assets to the queue
-     *
-     * @return {Promise} Resolved when the assets files are downloaded and parsed into texture objects
-     */
+   * Create a Loader instance and add the game assets to the queue
+   *
+   * @return {Promise} Resolved when the assets files are downloaded and parsed into texture objects
+   */
   loadImages(images = {}, progressCallback = () => {}) {
     const loader = new Loader(config.root);
 
@@ -86,11 +95,11 @@ class AssetManager {
   }
 
   /**
-     * Prerender our loaded textures, so that they don't need to be uploaded to the GPU the first time we use them.
-     * Very helpful when we want to swap textures during an animation without the animation stuttering
-     *
-     * @return {Promise} Resolved when all queued uploads have completed
-     */
+   * Prerender our loaded textures, so that they don't need to be uploaded to the GPU the first time we use them.
+   * Very helpful when we want to swap textures during an animation without the animation stuttering
+   *
+   * @return {Promise} Resolved when all queued uploads have completed
+   */
   prepareImages(images = {}, renderer = this.renderer) {
     const prepare = renderer.plugins.prepare;
 
@@ -102,10 +111,10 @@ class AssetManager {
   }
 
   /**
-     * Create a Howl instance for each sound asset and load it.
-     *
-     * @return {Promise} Resolved when the assets files are downloaded and parsed into Howl objects
-     */
+   * Create a Howl instance for each sound asset and load it.
+   *
+   * @return {Promise} Resolved when the assets files are downloaded and parsed into Howl objects
+   */
   loadSounds(sounds = {}, progressCallback = () => {}) {
     const soundPromises = [];
 
@@ -121,7 +130,7 @@ class AssetManager {
 
   /**
    * Creates spritesheets for animations and other purposes
-   * @param {<Array.{ image: String, data: Object }>} list 
+   * @param {<Array.{ image: String, data: Object }>} list
    */
   prepareSpritesheets(list) {
     const promises = list.map((item) => {
@@ -133,7 +142,7 @@ class AssetManager {
         });
       });
     });
-    
+
     return Promise.all(promises);
   }
 
