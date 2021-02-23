@@ -2,17 +2,21 @@ import { Container, Sprite, Text } from 'pixi.js';
 import gsap from 'gsap/all';
 
 export default class Button extends Container {
+  /**
+   * @param {String} text  - The value used for button text
+   * @param {Number} scale - The value which determines the scale of the button
+   */
   constructor(text, scale) {
     super();
     this._text = text;
     this._scale = scale;
 
-    this._backGround = null;
-    this._textElement = null;
-
     this._init();
   }
 
+  /**
+   * @private
+   */
   _init() {
     this._addBackground();
     this._addText();
@@ -21,6 +25,9 @@ export default class Button extends Container {
     this.addChild(this._backGround);
   }
 
+  /**
+   * @private
+   */
   _addText() {
     const text = new Text(this._text, {
       fontSize: 80,
@@ -31,7 +38,10 @@ export default class Button extends Container {
     this._textElement = text;
   }
 
-  async _onClick() {
+  /**
+   * @public
+   */
+  async handleClick() {
     await gsap.fromTo(
       this.scale,
       { x: 1, y: 1 },
@@ -45,6 +55,9 @@ export default class Button extends Container {
     );
   }
 
+  /**
+   * @private
+   */
   _addBackground() {
     const backGround = new Sprite.from('button');
     backGround.anchor.set(0.5);
