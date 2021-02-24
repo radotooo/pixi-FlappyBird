@@ -22,10 +22,12 @@ export default class Play extends Scene {
   }
 
   _addStartScreen() {
+    // this._addEndScreen();
     const startScreen = new StartScreen();
     this._startScreen = startScreen;
     this._startScreen.on(StartScreen.event.START_GAME, () => this._startGame());
     this._startScreen.show();
+    // this._endScreen.show();
     this.addChild(startScreen);
   }
 
@@ -101,6 +103,7 @@ export default class Play extends Scene {
    */
   async _restartGame() {
     this._endScreen.hide();
+    this.score.resetScore();
     this.removeChild(this.bird);
     this.removeChild(this.score);
     this._obstacles.forEach((x) => x.destroy());
@@ -150,7 +153,10 @@ export default class Play extends Scene {
    * @private
    */
   _stopGame() {
-    this._endScreen.show();
+    this._endScreen.show(
+      this.score.getCurrentScore(),
+      this.score.getBestScore()
+    );
     this.ticker.stop();
     this._gameOver = true;
   }

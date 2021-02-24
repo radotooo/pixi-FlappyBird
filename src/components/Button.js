@@ -31,7 +31,7 @@ export default class Button extends Container {
   _addText() {
     const text = new Text(this._text, {
       fontSize: 80,
-      fontWeight: 900,
+      fontFamily: 'Press Start 2P',
     });
 
     text.anchor.set(0.5);
