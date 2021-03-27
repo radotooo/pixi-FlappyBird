@@ -11,6 +11,9 @@ export default class Button extends Container {
     this._text = text;
     this._scale = scale;
 
+    this.buttonMode = true;
+    this.interactive = true;
+
     this._init();
   }
 
@@ -31,7 +34,8 @@ export default class Button extends Container {
   _addText() {
     const text = new Text(this._text, {
       fontSize: 80,
-      fontFamily: 'Press Start 2P',
+      fontWeight: 700,
+      // fontFamily: 'Press Start 2P',
     });
 
     text.anchor.set(0.5);

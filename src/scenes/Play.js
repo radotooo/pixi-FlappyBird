@@ -6,7 +6,6 @@ import Points from '../components/Score';
 import ObstacleSet from '../components/ObstacleSet';
 import EndScreen from '../components/EndScreen';
 
-import StartScreen from '../components/StartScreen';
 import config from '../config';
 
 export default class Play extends Scene {
@@ -15,20 +14,17 @@ export default class Play extends Scene {
     this._pressedKeys = [];
     this._obstacles = [];
     this._gameOver = false;
-
-    this._addStartScreen();
-    this._addEndScreen();
-    this._addEventListeners();
+    this.frame = 1;
   }
 
-  _addStartScreen() {
-    // this._addEndScreen();
-    const startScreen = new StartScreen();
-    this._startScreen = startScreen;
-    this._startScreen.on(StartScreen.event.START_GAME, () => this._startGame());
-    this._startScreen.show();
-    // this._endScreen.show();
-    this.addChild(startScreen);
+  onCreated() {
+    this._addBird();
+    this._addObstacles(config.view.height, this.bird.x, 4, 5);
+    this._addTicker();
+    this._addPoint();
+    this._addEndScreen();
+    this._addEventListeners();
+    this.ticker.start();
   }
 
   _addEndScreen() {
@@ -52,7 +48,8 @@ export default class Play extends Scene {
    */
   _addBird() {
     const bird = new Bird(this._gameOver);
-    bird.x = -(this.parent.parent.screenWidth / 2 - bird.width);
+    // bird.x = -(this.parent.parent.screenWidth / 2 - bird.width);
+    bird.x = 0;
     this.bird = bird;
     this.addChild(this.bird);
   }
@@ -87,16 +84,6 @@ export default class Play extends Scene {
     }
   }
 
-  async _startGame() {
-    await this._startScreen.hide();
-    this._addBird();
-    this._addObstacles(config.view.height, this.bird.x, 4, 5);
-    this._addTicker();
-    this._addPoint();
-    this._addEndScreen();
-    this.ticker.start();
-  }
-
   /**
    * Reset animation
    * @private
@@ -107,10 +94,10 @@ export default class Play extends Scene {
     this.removeChild(this.bird);
     this.removeChild(this.score);
     this._obstacles.forEach((x) => x.destroy());
-    this.ticker.destroy();
+    // this.ticker.stop();
     this._obstacles = [];
     this._gameOver = false;
-    this._startGame();
+    this.onCreated();
   }
 
   _update(delta) {
@@ -131,7 +118,7 @@ export default class Play extends Scene {
   }
 
   _addEventListeners() {
-    document.addEventListener('keydown', (key) => {
+    document.addEventListener('keydown', async (key) => {
       const currentKeyPressed = key.code;
       if (
         currentKeyPressed === 'Space' &&
@@ -139,8 +126,7 @@ export default class Play extends Scene {
         !this._gameOver
       ) {
         this._pressedKeys.push(currentKeyPressed);
-
-        this.bird.goUp(70);
+        await this.bird.goUp(70, this._pressedKeys);
       }
     });
 
