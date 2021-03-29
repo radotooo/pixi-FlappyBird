@@ -2,11 +2,14 @@ import { Ticker } from 'pixi.js';
 import Scene from './Scene';
 
 import Bird from '../components/Bird';
-import Points from '../components/Score';
+import Score from '../components/Score';
 import ObstacleSet from '../components/ObstacleSet';
-import EndScreen from '../components/EndScreen';
 
 import config from '../config';
+
+const EVENTS = {
+  END: 'end',
+};
 
 export default class Play extends Scene {
   constructor() {
@@ -14,31 +17,29 @@ export default class Play extends Scene {
     this._pressedKeys = [];
     this._obstacles = [];
     this._gameOver = false;
-    this.frame = 1;
+    this.frame = 150;
+  }
+
+  static get event() {
+    return EVENTS;
   }
 
   onCreated() {
     this._addBird();
-    this._addObstacles(config.view.height, this.bird.x, 4, 5);
+    this._addScore();
     this._addTicker();
-    this._addPoint();
-    this._addEndScreen();
     this._addEventListeners();
-    this.ticker.start();
   }
 
-  _addEndScreen() {
-    const endScreen = new EndScreen();
-    this._endScreen = endScreen;
-    this._endScreen.on(EndScreen.event.RESTART_GAME, () => this._restartGame());
-    this._endScreen.zIndex = 2;
-    this.addChild(this._endScreen);
-  }
+  /**
+   * @private
+   */
+  _addScore() {
+    const score = new Score();
 
-  _addPoint() {
-    const point = new Points();
-    this.score = point;
-    this.score.zIndex = 1;
+    score.zIndex = 1;
+
+    this.score = score;
     this.addChild(this.score);
   }
 
@@ -48,8 +49,7 @@ export default class Play extends Scene {
    */
   _addBird() {
     const bird = new Bird(this._gameOver);
-    // bird.x = -(this.parent.parent.screenWidth / 2 - bird.width);
-    bird.x = 0;
+    bird.x = -window.innerWidth / 2 + 200;
     this.bird = bird;
     this.addChild(this.bird);
   }
@@ -60,63 +60,109 @@ export default class Play extends Scene {
   _addTicker() {
     this.ticker = new Ticker();
     this.ticker.add((delta) => this._update(delta));
+    this.ticker.start();
   }
 
   /**
-   * Create multiple OBstacleSet and add gap betweenn
-   * @param {Number} windowHeight Viewport height in pixels
-   * @param {Number} birdXPosition X position of bird
-   * @param {Number} count Number of ObstacleSet to create
-   * @param {Number} gap Number multiplayed by ObstacleSet.width representing the gap between obstacles
+   * @param {Object} bird Bird sprite boundaries
+   * @param {PIXI.Sprite} currentBoundsTop Top obsticle
+   * @param {PIXI.Sprite} currentBoundsBottom Bottom obsticle
+   * @private
    */
-  _addObstacles(windowHeight, birdXPosition, count, gap) {
-    for (let index = 0; index < count; index++) {
-      const obstacle = new ObstacleSet(windowHeight);
+  _checkCollision(bird, obstacle) {
+    return (
+      this._interaction(bird, obstacle.top.getBounds()) ||
+      this._interaction(bird, obstacle.bottom.getBounds())
+    );
+  }
 
-      birdXPosition += obstacle.width * gap;
-      obstacle.x += birdXPosition + 250;
-      obstacle.on(ObstacleSet.events.OBSTACLE_PASSED, () =>
-        this.score.update()
-      );
-      obstacle.on(ObstacleSet.events.OBSTACLE_HIT, () => this._stopGame());
-      this._obstacles.push(obstacle);
-      this.addChild(obstacle);
+  /**
+   * @private
+   */
+  _interaction(bird, obstacle) {
+    return (
+      bird.x + bird.width > obstacle.x &&
+      bird.x < obstacle.x + obstacle.width &&
+      bird.y + bird.height > obstacle.y &&
+      bird.y < obstacle.y + obstacle.height + 15
+    );
+  }
+
+  /**
+   * @private
+   */
+  _crateObsticle() {
+    const obstacle = new ObstacleSet();
+
+    obstacle.x = window.innerWidth / 2 + obstacle.width;
+
+    this.addChild(obstacle);
+    this._obstacles.push(obstacle);
+  }
+
+  /**
+   * @private
+   */
+  _checkifBirdHitScene(birdBounds) {
+    if (
+      birdBounds.y >= config.view.height - birdBounds.height / 1.2 ||
+      birdBounds.y <= 0
+    ) {
+      this._stopGame();
     }
   }
 
   /**
-   * Reset animation
    * @private
    */
-  async _restartGame() {
-    this._endScreen.hide();
-    this.score.resetScore();
-    this.removeChild(this.bird);
-    this.removeChild(this.score);
-    this._obstacles.forEach((x) => x.destroy());
-    // this.ticker.stop();
-    this._obstacles = [];
-    this._gameOver = false;
-    this.onCreated();
-  }
-
   _update(delta) {
+    this.frame++;
+    if (this.frame % 170 === 0) {
+      this._crateObsticle();
+    }
+
     const birdBounds = this.bird.getBounds();
     this.bird.update(delta, config.view.height, this._obstacles);
 
-    if (birdBounds.y >= config.view.height - birdBounds.height / 1.2) {
-      this._stopGame();
-    }
+    this._checkifBirdHitScene(birdBounds);
+    const currentObstacle = this._obstacles[0];
 
-    this._obstacles.forEach((obstacle) => {
-      if (obstacle.collision) {
+    if (currentObstacle) {
+      if (this._checkCollision(birdBounds, currentObstacle)) {
         this._stopGame();
       }
+      if (currentObstacle.isPassed === false) {
+        this._birdIsPassingObstacle(birdBounds, currentObstacle.getBounds());
+      }
+      this._obstacleIsOutsideScene(currentObstacle.getBounds());
+    }
 
-      obstacle.update(delta, config.view.width, birdBounds);
-    });
+    this._obstacles.forEach((x) => x.move());
   }
 
+  /**
+   * @private
+   */
+  _birdIsPassingObstacle(birdBounds, currentObstacleBounds) {
+    if (birdBounds.x > currentObstacleBounds.x) {
+      this._obstacles[0].isPassed = true;
+      this.score.update();
+    }
+  }
+
+  /**
+   * @private
+   */
+  _obstacleIsOutsideScene(currentObstacleBounds) {
+    if (this._obstacles[0].isPassed && currentObstacleBounds.x < -100) {
+      this.removeChild(this._obstacles[0]);
+      this._obstacles.shift();
+    }
+  }
+
+  /**
+   * @private
+   */
   _addEventListeners() {
     document.addEventListener('keydown', async (key) => {
       const currentKeyPressed = key.code;
@@ -139,12 +185,12 @@ export default class Play extends Scene {
    * @private
    */
   _stopGame() {
-    this._endScreen.show(
-      this.score.getCurrentScore(),
-      this.score.getBestScore()
-    );
     this.ticker.stop();
     this._gameOver = true;
+    this.emit(Play.event.END, {
+      currentScore: this.score.getCurrentScore(),
+      bestScore: this.score.getBestScore(),
+    });
   }
 
   /**

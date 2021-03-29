@@ -4,7 +4,7 @@ import { Container, Text } from 'pixi.js';
  * Initializes a new instance of Score
  * @class
  */
-export default class Socre extends Container {
+export default class Score extends Container {
   constructor() {
     super();
     this.localStorage = localStorage;
