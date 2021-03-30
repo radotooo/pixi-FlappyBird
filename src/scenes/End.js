@@ -22,7 +22,7 @@ export default class End extends Scene {
     this._addScoreElement();
     this._addButton();
     this._addGameOverElement();
-    this._updateScoreElement(20, 20);
+    this._updateScoreElement();
   }
 
   _addEventListeners() {
