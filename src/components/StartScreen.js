@@ -25,7 +25,6 @@ export default class StartScreen extends Container {
    *@private
    */
   _init() {
-    this.visible = false;
     this._addButton();
     this.addChild(this._button);
   }

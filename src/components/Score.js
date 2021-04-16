@@ -70,10 +70,6 @@ export default class Score extends Container {
       fontWeight: 'bold',
       fontSize: 40,
     });
-
-    this.text.x = 350;
-    this.text.y = -220;
-
     this.addChild(this.text);
   }
 }

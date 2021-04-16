@@ -1,4 +1,4 @@
-import { Container } from 'pixi.js';
+import { Container, renderer, Sprite, Graphics } from 'pixi.js';
 import Obstacle from './Obstacle';
 import { random } from '../core/utils';
 
@@ -23,30 +23,22 @@ export default class ObstacleSet extends Container {
     return EVENTS;
   }
 
-  move() {
-    this.x -= 3;
-  }
-
   /**
    * @private
    */
   async _init() {
-    const randomNum = random(1, 2);
-    const obstacleTop = new Obstacle(-400, 180);
-    this.top = obstacleTop;
-    this.top.scale.y = 3.2;
+    const obstacleTop = new Obstacle(-500, 180);
 
-    const obstacleBottom = new Obstacle(400);
+    obstacleTop.scale.y = 4.2;
+    obstacleTop.scale.x = 1.5;
+    this.top = obstacleTop;
+
+    const obstacleBottom = new Obstacle(500);
+
+    obstacleBottom.scale.y = 4.2;
+    obstacleBottom.scale.x = 1.5;
     this.bottom = obstacleBottom;
 
-    this.bottom.scale.y = 3.2;
-    if (randomNum < 1.5) {
-      this.top.scale.y += randomNum;
-      this.bottom.scale.y -= randomNum;
-    } else {
-      this.top.scale.y -= randomNum;
-      this.bottom.scale.y += randomNum;
-    }
-    this.addChild(obstacleTop, obstacleBottom);
+    this.addChild(this.top, this.bottom);
   }
 }
