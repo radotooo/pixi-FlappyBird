@@ -83,6 +83,7 @@ export default class End extends Scene {
    * @private
    */
   _updateScoreElement() {
+    // eslint-disable-next-line prefer-template
     const text = `SCORE \n \n You:${('0' + this._currentScore).slice(
       -2
     )}  Best:${this._bestScore}`;

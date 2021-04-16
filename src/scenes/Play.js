@@ -1,3 +1,4 @@
+/* eslint-disable operator-linebreak */
 import { Ticker } from 'pixi.js';
 import Scene from './Scene';
 
@@ -55,6 +56,7 @@ export default class Play extends Scene {
     const bird = new Bird(this._gameOver);
 
     bird.x = -window.innerWidth / 2 + 200;
+    bird.scale.set(0.8);
     this._bird = bird;
 
     this.addChild(this._bird);
@@ -90,8 +92,8 @@ export default class Play extends Scene {
     return (
       bird.x + bird.width > obstacle.x &&
       bird.x < obstacle.x + obstacle.width &&
-      bird.y + bird.height > obstacle.y &&
-      bird.y < obstacle.y + obstacle.height + 15
+      bird.y + bird.height / 2 > obstacle.y &&
+      bird.y < obstacle.y + obstacle.height
     );
   }
 
@@ -113,8 +115,8 @@ export default class Play extends Scene {
    */
   _checkifBirdHitScene(birdBounds) {
     if (
-      birdBounds.y >= config.view.height - birdBounds.height / 1.2 ||
-      birdBounds.y <= 0
+      birdBounds.y >= config.view.height - birdBounds.height ||
+      birdBounds.y <= birdBounds.heightfallAnimation
     ) {
       this._stopGame();
     }
@@ -123,7 +125,7 @@ export default class Play extends Scene {
   /**
    * @private
    */
-  _update(delta) {
+  _update() {
     this._frame++;
     if (this._frame % 170 === 0) {
       this._crateObsticle();
@@ -131,8 +133,6 @@ export default class Play extends Scene {
 
     const birdBounds = this._bird.getBounds();
     const currentObstacle = this._obstacles[0];
-
-    this._bird.update(delta, config.view.height, this._obstacles);
 
     this._checkifBirdHitScene(birdBounds);
 
@@ -149,6 +149,9 @@ export default class Play extends Scene {
     this._moveObstacles();
   }
 
+  /**
+   * @private
+   */
   _moveObstacles() {
     this._obstacles.forEach((obstacle) => (obstacle.x -= 3));
   }
@@ -185,7 +188,7 @@ export default class Play extends Scene {
         !this._gameOver
       ) {
         this._pressedKeys.push(currentKeyPressed);
-        await this._bird.goUp(70, this._pressedKeys);
+        await this._bird.goUp(70);
       }
     });
 
@@ -213,6 +216,7 @@ export default class Play extends Scene {
    * @param  {Number} width  Window width
    * @param  {Number} height Window height
    */
+  // eslint-disable-next-line no-unused-vars
   onResize(width, height) {
     // eslint-disable-line no-unused-vars
   }

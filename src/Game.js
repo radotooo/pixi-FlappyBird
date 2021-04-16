@@ -1,5 +1,7 @@
 import Splash from './scenes/Splash';
 import Play from './scenes/Play';
+import Start from './scenes/Start';
+import End from './scenes/End';
 import { Container } from 'pixi.js';
 
 /**
@@ -25,19 +27,37 @@ export default class Game extends Container {
   }
 
   async start() {
+    this._addEventListeners();
     await this.switchScene(Splash, { scene: 'splash' });
     await this.currentScene.finish;
+    // this.switchScene(Play, { scene: 'play' });
+    this.switchScene(Start, { scene: 'Start' });
+  }
 
-    this.switchScene(Play, { scene: 'play' });
+  _addEventListeners() {
+    this.on(Game.events.SWITCH_SCENE, () => {
+      this.currentScene.on('restart', () =>
+        this.switchScene(Play, { scene: 'play' })
+      );
+
+      this.currentScene.on('start', () =>
+        this.switchScene(Play, { scene: 'play' })
+      );
+
+      this.currentScene.once(Play.event.END, (data) => {
+        this.switchScene(End, { scene: 'End' }, false, data);
+      });
+    });
   }
 
   /**
    * @param {Function} constructor
    * @param {String} scene
    */
-  switchScene(constructor, scene) {
-    this.removeChild(this.currentScene);
-    this.currentScene = new constructor();
+  switchScene(constructor, scene, remove = true, data = {}) {
+    if (remove) this.removeChildren();
+
+    this.currentScene = new constructor(data);
     this.currentScene.background = this._background;
     this.addChild(this.currentScene);
 
