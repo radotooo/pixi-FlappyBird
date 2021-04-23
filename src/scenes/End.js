@@ -47,7 +47,7 @@ export default class End extends Scene {
 
   async _handleClick() {
     await this._button.handleClick();
-    this.emit('restart');
+    this.emit(End.event.RESTART_GAME);
   }
 
   /**

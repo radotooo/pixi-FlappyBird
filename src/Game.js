@@ -30,17 +30,16 @@ export default class Game extends Container {
     this._addEventListeners();
     await this.switchScene(Splash, { scene: 'splash' });
     await this.currentScene.finish;
-    // this.switchScene(Play, { scene: 'play' });
     this.switchScene(Start, { scene: 'Start' });
   }
 
   _addEventListeners() {
     this.on(Game.events.SWITCH_SCENE, () => {
-      this.currentScene.on('restart', () =>
+      this.currentScene.on(End.event.RESTART_GAME, () =>
         this.switchScene(Play, { scene: 'play' })
       );
 
-      this.currentScene.on('start', () =>
+      this.currentScene.on(Start.events.START, () =>
         this.switchScene(Play, { scene: 'play' })
       );
 

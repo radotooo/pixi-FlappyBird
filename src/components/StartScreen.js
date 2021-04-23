@@ -9,6 +9,7 @@ const EVENTS = {
 /**
  * Initializes a new instance of StartScreen
  * @class
+ * @extends {PIXI.Container}
  */
 export default class StartScreen extends Container {
   constructor() {

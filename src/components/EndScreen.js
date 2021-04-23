@@ -9,6 +9,7 @@ const EVENTS = {
 /**
  * Initializes a new instance of EndScreen
  * @class
+ * @extends {PIXI.Container}
  */
 export default class EndScreen extends Container {
   constructor() {
@@ -83,7 +84,7 @@ export default class EndScreen extends Container {
    * @private
    */
   _updateScoreElement(currentScore, bestScore) {
-    const text = `SCORE \n \n You:${('0' + currentScore).slice(
+    const text = `SCORE \n \n You:${`0${currentScore}`.slice(
       -2
     )}  Best:${bestScore}`;
     this.text.text = text;

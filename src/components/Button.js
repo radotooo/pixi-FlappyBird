@@ -1,6 +1,11 @@
 import { Container, Sprite, Text } from 'pixi.js';
 import gsap from 'gsap/all';
 
+/**
+ * Initializes a new instance of Button
+ * @class
+ * @extends {PIXI.Container}
+ */
 export default class Button extends Container {
   /**
    * @param {String} text  - The value used for button text
@@ -35,7 +40,7 @@ export default class Button extends Container {
     const text = new Text(this._text, {
       fontSize: 80,
       fontWeight: 700,
-      // fontFamily: 'Press Start 2P',
+      fontFamily: 'Press Start 2P',
     });
 
     text.anchor.set(0.5);

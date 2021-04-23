@@ -3,6 +3,7 @@ import { Container, Text } from 'pixi.js';
 /**
  * Initializes a new instance of Score
  * @class
+ * @extends {PIXI.Container}
  */
 export default class Score extends Container {
   constructor() {
