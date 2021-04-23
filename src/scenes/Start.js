@@ -1,9 +1,17 @@
 import Scene from './Scene';
 import Button from '../components/Button';
 
+const EVENTS = {
+  START: 'startt',
+};
+
 export default class Start extends Scene {
   constructor() {
     super();
+  }
+
+  static get events() {
+    return EVENTS;
   }
 
   onCreated() {
@@ -11,6 +19,9 @@ export default class Start extends Scene {
     this._addEventListeners();
   }
 
+  /**
+   * @orivate
+   */
   _createStartScreen() {
     const button = new Button('PLAY', 0.5);
 
@@ -18,10 +29,13 @@ export default class Start extends Scene {
     this.addChild(this._button);
   }
 
+  /**
+   * @orivate
+   */
   _addEventListeners() {
     this._button.on('click', () => {
       this._button.handleClick();
-      this.emit('start');
+      this.emit(Start.events.START);
     });
   }
 }

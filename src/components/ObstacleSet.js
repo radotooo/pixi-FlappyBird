@@ -1,6 +1,5 @@
-import { Container, renderer, Sprite, Graphics } from 'pixi.js';
+import { Container } from 'pixi.js';
 import Obstacle from './Obstacle';
-import { random } from '../core/utils';
 
 const EVENTS = {
   OBSTACLE_PASSED: 'obstacle_passed',
@@ -8,8 +7,9 @@ const EVENTS = {
 };
 
 /**
- * Class representing a "Obstacle"
- * @extends PIXI.Container
+ * Initializes a new instance of ObstacleSet
+ * @class
+ * @extends {PIXI.Container}
  */
 export default class ObstacleSet extends Container {
   constructor() {

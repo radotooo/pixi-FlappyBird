@@ -1,10 +1,11 @@
 import { Sprite, Texture } from 'pixi.js';
 
 /**
- * Class representing a "Obstacle"
- * @param {Number} y Container y value
+ * Initializes a new instance of Obstacle
+ * @class
+ * @param {Number} y Container y coordinate value
  * @param {Number} angle Container angle value
- * @extends PIXI.Container
+ * @extends {PIXI.Sprite}
  */
 export default class Obstacle extends Sprite {
   constructor(y, angle = 0) {

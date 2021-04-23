@@ -21,6 +21,7 @@ export default class Play extends Scene {
     this._gameOver = false;
     this._frame = 150;
     this.sortableChildren = true;
+    this._config = config;
   }
 
   static get event() {
@@ -100,7 +101,7 @@ export default class Play extends Scene {
   /**
    * @private
    */
-  _crateObsticle() {
+  _crateObstacle() {
     const obstacle = new ObstacleSet();
 
     obstacle.x = window.innerWidth / 2 + obstacle.width;
@@ -113,28 +114,29 @@ export default class Play extends Scene {
   /**
    * @private
    */
-  _checkifBirdHitScene(birdBounds) {
+  _checkIfBirdHitScene(birdBounds) {
     if (
-      birdBounds.y >= config.view.height - birdBounds.height ||
-      birdBounds.y <= birdBounds.heightfallAnimation
+      birdBounds.y >= this._config.view.height - birdBounds.height ||
+      birdBounds.y <= 0
     ) {
       this._stopGame();
     }
   }
 
   /**
+   * Check for collision and passed obstacles on every frame
    * @private
    */
   _update() {
     this._frame++;
-    if (this._frame % 170 === 0) {
-      this._crateObsticle();
+    if (this._frame % this._config.scenes.Play.obstacleDistance === 0) {
+      this._crateObstacle();
     }
 
     const birdBounds = this._bird.getBounds();
     const currentObstacle = this._obstacles[0];
 
-    this._checkifBirdHitScene(birdBounds);
+    this._checkIfBirdHitScene(birdBounds);
 
     if (currentObstacle) {
       if (this._checkCollision(birdBounds, currentObstacle)) {
@@ -188,7 +190,7 @@ export default class Play extends Scene {
         !this._gameOver
       ) {
         this._pressedKeys.push(currentKeyPressed);
-        await this._bird.goUp(70);
+        await this._bird.goUp(this._config.scenes.Play.birdGoupSpeed);
       }
     });
 

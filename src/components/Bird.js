@@ -3,8 +3,9 @@ import gsap from 'gsap/all';
 import config from '../config';
 
 /**
- * Class representing a Bird
- * @extends PIXI.Container
+ * Initializes a new instance of Bird
+ * @class
+ * @extends {PIXI.Container}
  */
 export default class Bird extends Container {
   constructor(gameOver) {
@@ -50,22 +51,22 @@ export default class Bird extends Container {
       .fromTo(
         this,
         {
-          y: this.y,
+          angle: this.angle,
         },
         {
-          y: config.view.height / 2,
-          duration: 0.7,
+          angle: 70,
+          duration: 0.5,
           ease: 'Power1.easeIn',
         }
       )
       .fromTo(
         this,
         {
-          angle: this.angle,
+          y: this.y,
         },
         {
-          angle: 70,
-          duration: 0.5,
+          y: config.view.height / 2,
+          duration: 0.7,
           ease: 'Power1.easeIn',
         },
         '<'
@@ -86,17 +87,17 @@ export default class Bird extends Container {
 
     await this._goUpAnimation
       .to(this, {
-        y: this.y - distance,
-        duration: 0.4,
+        angle: -20,
+        duration: 0.3,
         ease: 'Power1.easeOut',
+        onComplete: () => this._goDown(),
       })
       .to(
         this,
         {
-          angle: -20,
-          duration: 0.3,
+          y: this.y - distance,
+          duration: 0.4,
           ease: 'Power1.easeOut',
-          onComplete: () => this._goDown(),
         },
         '<'
       );

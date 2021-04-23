@@ -1,7 +1,5 @@
 export default {
   view: {
-    // width: 900,
-    // height: 500,
     width: window.innerWidth,
     height: window.innerHeight,
     backgroundColor: 0xffffff,
@@ -21,6 +19,10 @@ export default {
   scenes: {
     Splash: {
       hideDelay: 0,
+    },
+    Play: {
+      birdGoupSpeed: 70,
+      obstacleDistance: 170,
     },
   },
   assets: {
