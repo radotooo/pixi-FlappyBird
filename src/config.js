@@ -23,6 +23,7 @@ export default {
     Play: {
       birdGoupSpeed: 70,
       obstacleDistance: 170,
+      obstacleMoveSpeed: 4,
     },
   },
   assets: {
