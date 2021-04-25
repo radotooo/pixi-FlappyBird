@@ -56,7 +56,7 @@ export default class Bird extends Container {
         {
           angle: 70,
           duration: 0.5,
-          ease: 'Power1.easeIn',
+          ease: 'Power0.easeIn',
         }
       )
       .fromTo(
@@ -88,16 +88,14 @@ export default class Bird extends Container {
     await this._goUpAnimation
       .to(this, {
         angle: -20,
-        duration: 0.3,
-        ease: 'Power1.easeOut',
-        onComplete: () => this._goDown(),
+        duration: 0.2,
       })
       .to(
         this,
         {
           y: this.y - distance,
-          duration: 0.4,
-          ease: 'Power1.easeOut',
+          duration: 0.3,
+          onComplete: () => this._goDown(),
         },
         '<'
       );

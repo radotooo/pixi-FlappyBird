@@ -1,11 +1,13 @@
-# ⚙ PIXI Boilerplate
-This project is used as a boilerplate for tasks in the "PIXI.js" course in Booost. Takes care of loading assets and intiliazing the scene. Just drop your images and sounds, set your viewport size and start coding. This is a fork of [PIXI.js Boilerplate](https://github.com/dopamine-lab/pixi-boilerplate)
+# :hatched_chick: FlappyNet :hatched_chick:
 
-Includes:
-* 📦 Bundling via Webpack
-* 🏝 Scene management
-* ✨ Out of the box loader with progress bar, see `src/scenes/Splash.js`
-* 📐 Viewport fitting and resize handling, see `Application.setupViewport()` in `src/core/Application.js`
+Simple game inspired by [flappybird](https://flappybird.io/).
+
+![](src/assets/preview.gif)
+
+Build with:
+
+- [PixiJS](https://www.pixijs.com/)
+- [GSAP](https://greensock.com/gsap/)
 
 ## Available Commands
 

@@ -43,7 +43,7 @@ export default class Play extends Scene {
 
     score.zIndex = 1;
     score.x = window.innerWidth / 2 - score.width * 2;
-    score.y = -window.innerWidth / 2 + score.height / 2;
+    score.y = -window.innerHeight / 2 + score.height / 2;
 
     this._score = score;
     this.addChild(this._score);
@@ -57,7 +57,7 @@ export default class Play extends Scene {
     const bird = new Bird(this._gameOver);
 
     bird.x = -window.innerWidth / 2 + 200;
-    bird.scale.set(0.8);
+    bird.scale.set(0.9);
     this._bird = bird;
 
     this.addChild(this._bird);
@@ -93,7 +93,7 @@ export default class Play extends Scene {
     return (
       bird.x + bird.width > obstacle.x &&
       bird.x < obstacle.x + obstacle.width &&
-      bird.y + bird.height / 2 > obstacle.y &&
+      bird.y + bird.height > obstacle.y &&
       bird.y < obstacle.y + obstacle.height
     );
   }
@@ -155,7 +155,9 @@ export default class Play extends Scene {
    * @private
    */
   _moveObstacles() {
-    this._obstacles.forEach((obstacle) => (obstacle.x -= 3));
+    this._obstacles.forEach(
+      (obstacle) => (obstacle.x -= this._config.scenes.Play.obstacleMoveSpeed)
+    );
   }
 
   /**
