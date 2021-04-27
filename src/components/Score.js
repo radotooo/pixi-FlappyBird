@@ -8,8 +8,8 @@ import { Container, Text } from 'pixi.js';
 export default class Score extends Container {
   constructor() {
     super();
-    this.localStorage = localStorage;
-    this._count = 0;
+    this._localStorage = localStorage;
+    this._setInitialScore();
     this._addText();
   }
 
@@ -36,7 +36,7 @@ export default class Score extends Container {
    * @public
    */
   getBestScore() {
-    return localStorage.getItem('bestScore');
+    return this._localStorage.getItem('bestScore');
   }
 
   /**
@@ -53,13 +53,10 @@ export default class Score extends Container {
    * @private
    */
   _saveToLocalStorage() {
-    if (!this.localStorage.bestScore) {
-      this.localStorage.setItem('bestScore', 0);
+    if (this._count > this._localStorage.getItem('bestScore')) {
+      this._localStorage.setItem('bestScore', this._count);
     }
-    if (this._count > this.localStorage.getItem('bestScore')) {
-      this.localStorage.setItem('bestScore', this._count);
-    }
-    this.localStorage.setItem('currentScore', this._count);
+    this._localStorage.setItem('currentScore', this._count);
   }
 
   /**
@@ -72,5 +69,15 @@ export default class Score extends Container {
       fontSize: 40,
     });
     this.addChild(this.text);
+  }
+
+  /**
+   * @private
+   */
+  _setInitialScore() {
+    this._count = 0;
+    if (!this._localStorage.bestScore) {
+      this._localStorage.setItem('bestScore', 0);
+    }
   }
 }
