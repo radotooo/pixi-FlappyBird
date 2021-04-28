@@ -9,6 +9,7 @@ export default class Score extends Container {
   constructor() {
     super();
     this._localStorage = localStorage;
+    
     this._setInitialScore();
     this._addText();
   }

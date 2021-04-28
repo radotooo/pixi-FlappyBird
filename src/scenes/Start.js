@@ -2,7 +2,7 @@ import Scene from './Scene';
 import Button from '../components/Button';
 
 const EVENTS = {
-  START: 'startt',
+  START: 'start',
 };
 
 export default class Start extends Scene {

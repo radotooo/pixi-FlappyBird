@@ -23,12 +23,13 @@ export default class End extends Scene {
     this._addButton();
     this._addGameOverElement();
     this._updateScoreElement();
+    this._addEventListeners();
   }
 
   _addEventListeners() {
     this._button.on('click', () => {
       this._button.handleClick();
-      this.emit('start');
+      this.emit(End.event.RESTART_GAME);
     });
   }
 
@@ -37,11 +38,12 @@ export default class End extends Scene {
    */
   _addButton() {
     const button = new Button('RETRY', 0.2);
+
     this._button = button;
     this._button.y = 100;
     this._button.buttonMode = true;
     this._button.interactive = true;
-    this._button.addListener('click', () => this._handleClick());
+    
     this.addChild(this._button);
   }
 
@@ -55,11 +57,13 @@ export default class End extends Scene {
    */
   _addBackground() {
     const background = new Sprite.from(Texture.WHITE);
+
     background.width = 900;
     background.height = 500;
     background.anchor.set(0.5);
     background.tint = '#212121';
     background.alpha = 0.8;
+
     this.addChild(background);
   }
 
@@ -75,6 +79,7 @@ export default class End extends Scene {
     });
     this.text.anchor.set(0.5);
     this.text.y = -190;
+
     this.addChild(this.text);
   }
 
@@ -95,9 +100,11 @@ export default class End extends Scene {
    */
   _addGameOverElement() {
     const element = new Sprite.from('gameOver');
+
     element.anchor.set(0.5);
     element.scale.x = 0.5;
     element.scale.y = 0.5;
+
     this.addChild(element);
   }
 }
