@@ -69,9 +69,11 @@ export default class Button extends Container {
    */
   _addBackground() {
     const backGround = new Sprite.from('button');
+
     backGround.anchor.set(0.5);
     backGround.scale.x = this._scale;
     backGround.scale.y = this._scale;
+    
     this._backGround = backGround;
   }
 }
